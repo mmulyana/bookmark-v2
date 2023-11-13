@@ -5,8 +5,15 @@ import { useBookmarkStore } from '../store/bookmarkStore'
 import { Bookmark } from '../model/bookmark'
 import { useAuthStore } from '../store/authStore'
 import { useGroupStore } from '../store/groupStore'
+import SelectField from './selectfield'
+import * as Yup from 'yup'
 
 type State = Omit<Bookmark, 'uid' | 'id'>
+
+const schema = Yup.object().shape({
+  link: Yup.string().required('Link is required'),
+  group: Yup.string().required('required is required'),
+})
 
 const initiState: State = {
   link: '',
@@ -26,6 +33,10 @@ export default function FormBookmark() {
       uid: user?.uid,
     } as BookmarkRequest
 
+    if (data.name === '') {
+      payload.name = data.link
+    }
+
     const res = await createBookmark(payload)
     if (!res) return
 
@@ -36,17 +47,17 @@ export default function FormBookmark() {
 
   return (
     <div>
-      <Formik initialValues={initiState} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initiState}
+        onSubmit={handleSubmit}
+        validationSchema={schema}
+      >
         {({ isSubmitting }) => (
           <Form>
             <div className='flex flex-col gap-6'>
-              <TextField name='name' type='text' placeholder='name' />
               <TextField name='link' type='text' placeholder='link' />
-              <Field name='group' as='select'>
-                {groups.map((group) => (
-                  <option key={group.id} value={group.name}>{group.name}</option>
-                ))}
-              </Field>
+              <TextField name='name' type='text' placeholder='name' />
+              <SelectField name='group' data={groups} />
               <TextField
                 name='description'
                 type='text'

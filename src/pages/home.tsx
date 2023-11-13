@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
-import FormBookmark from '../components/form-bookmark'
 import { useAuthStore } from '../store/authStore'
 import { useBookmarkStore } from '../store/bookmarkStore'
 import { getBookmark } from '../service/bookmark'
 import { Bookmark } from '../model/bookmark'
 import { Link } from 'react-router-dom'
-import FormGrup from '../components/form-group'
 import { getGroup } from '../service/group'
 import { useGroupStore } from '../store/groupStore'
+import Layout from '../components/layout'
 
 export default function Home() {
   const { user } = useAuthStore()
@@ -29,12 +28,7 @@ export default function Home() {
   }, [user])
 
   return (
-    <div>
-      <p>{user?.name}</p>
-      <div className='mt-10 grid grid-cols-2 gap-5 max-w-3xl px-4'>
-        <FormBookmark />
-        <FormGrup />
-      </div>
+    <Layout>
       <div className='mt-4'>
         {bookmarks.map((bookmark) => (
           <div key={bookmark.id}>
@@ -44,6 +38,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-    </div>
+    </Layout>
   )
 }
