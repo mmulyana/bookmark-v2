@@ -30,7 +30,10 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className='mt-4'>
+      <div className='border-b border-gray-300 pb-1.5'>
+        <p>All</p>
+      </div>
+      <div className='mt-4 flex flex-col gap-8'>
         {bookmarks.map((bookmark) => (
           <BookmarkItem key={bookmark.id} bookmark={bookmark}/>
         ))}

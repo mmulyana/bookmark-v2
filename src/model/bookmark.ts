@@ -5,4 +5,5 @@ export type Bookmark = {
     group: string
     uid: string
     description?: string
+    color?: string
 }

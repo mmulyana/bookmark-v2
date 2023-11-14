@@ -25,13 +25,25 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
           className='w-5 h-5 rounded mt-0.5'
         />
         <div className='space-y-0.5'>
-          <Link
-            to={bookmark.link}
-            target='_blank'
-            className='text-gray-800 leading-none font-medium'
-          >
-            {bookmark.name}
-          </Link>
+          <div className='flex gap-2 items-center'>
+            <Link
+              to={bookmark.link}
+              target='_blank'
+              className='text-gray-800 leading-none font-medium'
+            >
+              {bookmark.name}
+            </Link>
+            <div
+              className={[
+                'px-1.5 py-0.5 rounded border text-xs capitalize',
+                borders[bookmark.color ?? '1'],
+                background[bookmark.color ?? '1'],
+                colors[bookmark.color ?? '1'],
+              ].join(' ')}
+            >
+              {bookmark.group}
+            </div>
+          </div>
           <p className='text-sm text-gray-500'>{bookmark.description}</p>
         </div>
       </div>
@@ -75,4 +87,32 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
       </div>
     </div>
   )
+}
+
+type Color = {
+  [key: string]: string
+}
+
+const background: Color = {
+  '1': 'bg-blue-500/10',
+  '2': 'bg-red-500/10',
+  '3': 'bg-amber-500/10',
+  '4': 'bg-sky-500/10',
+  '5': 'bg-teal-500/10',
+}
+
+const colors: Color = {
+  '1': 'text-blue-700',
+  '2': 'text-red-700',
+  '3': 'text-amber-700',
+  '4': 'text-sky-700',
+  '5': 'text-teal-700',
+}
+
+const borders: Color = {
+  '1': 'border-blue-500',
+  '2': 'border-red-500',
+  '3': 'border-amber-500',
+  '4': 'border-sky-500',
+  '5': 'border-teal-500',
 }
