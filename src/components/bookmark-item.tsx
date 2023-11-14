@@ -18,24 +18,20 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
   }
 
   return (
-    <div className='flex items-start justify-between'>
-      <div className='flex gap-2 items-start'>
-        <img
-          src={`https://s2.googleusercontent.com/s2/favicons?domain=${bookmark.link}`}
-          className='w-5 h-5 rounded mt-0.5'
-        />
-        <div className='space-y-0.5'>
-          <div className='flex gap-2 items-center'>
-            <Link
-              to={bookmark.link}
-              target='_blank'
-              className='text-gray-800 leading-none font-medium'
-            >
-              {bookmark.name}
-            </Link>
+    <div className='flex items-start justify-between border-b border-gray-200 py-3.5 px-2.5'>
+      <div className='space-y-0.5'>
+        <div className='flex gap-2 items-center'>
+          <Link
+            to={bookmark.link}
+            target='_blank'
+            className='text-gray-800 leading-none font-medium'
+          >
+            {bookmark.name}
+          </Link>
+          {bookmark.group !== '' ? (
             <div
               className={[
-                'px-1.5 py-0.5 rounded border text-xs capitalize',
+                'px-1.5 py-0.5 rounded border text-xs capitalize mt-1',
                 borders[bookmark.color ?? '1'],
                 background[bookmark.color ?? '1'],
                 colors[bookmark.color ?? '1'],
@@ -43,9 +39,9 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
             >
               {bookmark.group}
             </div>
-          </div>
-          <p className='text-sm text-gray-500'>{bookmark.description}</p>
+          ) : null}
         </div>
+        <p className='text-sm text-gray-500'>{bookmark.description}</p>
       </div>
       <div className='h-fit relative'>
         <button
@@ -56,7 +52,7 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
         </button>
         <div
           className={[
-            'absolute w-24 h-fit right-0 bg-white p-1 rounded-md space-y-2',
+            'absolute w-24 h-fit right-0 bg-white p-1 rounded-md space-y-2 z-10 border border-gray-200/50 shadow-lg shadow-gray-300/80',
             isOpen ? 'block' : 'hidden',
           ].join(' ')}
           ref={ref}
