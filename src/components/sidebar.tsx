@@ -1,8 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useGroupStore } from '../store/groupStore'
+import { PlusIcon } from '@heroicons/react/20/solid'
+import { useState } from 'react'
+import FormGroup from './form-group'
+import {
+  StarIcon,
+  ArchiveBoxIcon,
+  Squares2X2Icon,
+} from '@heroicons/react/24/outline'
 
 export default function Sidebar() {
   const { groups } = useGroupStore()
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <div className='w-[240px] h-full absolute top-0 left-0 px-4 pt-5'>
@@ -13,28 +22,69 @@ export default function Sidebar() {
         </span>
       </p>
       <div className='mt-8 flex flex-col gap-4'>
-        <Link to='/' className='text-white text-sm'>
+        <Link
+          to='/'
+          className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
+        >
+          <Squares2X2Icon width={16} height={16} />
           All
         </Link>
-        <Link to='/favorites' className='text-white text-sm'>
+        <Link
+          to='/favorites'
+          className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
+        >
+          <StarIcon width={16} height={16} />
           Favorites
         </Link>
-        <Link to='/archives' className='text-white text-sm'>
+        <Link
+          to='/archives'
+          className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
+        >
+          <ArchiveBoxIcon width={16} height={16} />
           Archives
         </Link>
       </div>
 
-      <p className='mt-10 text-gray-100/80 text-xs uppercase font-medium'>Collections</p>
-      <div className='mt-2.5 flex flex-col gap-3'>
+      <div className='flex justify-between items-center mt-8'>
+        <p className='text-gray-100/80 text-xs uppercase font-medium'>
+          Collections
+        </p>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className='w-5 h-5 rounded bg-gray-100/20 text-white flex items-center justify-center hover:bg-white hover:text-gray-900'
+        >
+          <PlusIcon height={16} width={16} />
+        </button>
+      </div>
+      <div className='mt-2.5 flex flex-col gap-3 max-h-40 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
         {groups.map((group) => (
           <Link
             to={`/index?group=${group.name}`}
-            className='text-white text-sm'
+            className='text-white text-sm flex items-center gap-2 capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
           >
-            #{group.name}
+            <div
+              className={[
+                'w-2 h-2 rounded-full',
+                colors[group.color ?? '1'],
+              ].join(' ')}
+            />
+            {group.name}
           </Link>
         ))}
       </div>
+      {!!isOpen && <FormGroup setIsOpen={setIsOpen} />}
     </div>
   )
+}
+
+type Color = {
+  [key: string]: string
+}
+
+const colors: Color = {
+  '1': 'bg-blue-500',
+  '2': 'bg-red-500',
+  '3': 'bg-amber-500',
+  '4': 'bg-sky-500',
+  '5': 'bg-teal-500',
 }
