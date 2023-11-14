@@ -53,15 +53,11 @@ export async function updateBookmark(
   }
 }
 
-export async function deleteBookmark({
-  uid,
-}: {
-  uid: string
-}): Promise<string | boolean> {
+export async function deleteBookmarkDB(id: string): Promise<boolean> {
   try {
-    const ref = doc(db, DOCS.USER, uid)
+    const ref = doc(db, DOCS.DATA, id)
     await deleteDoc(ref)
-    return 'success update'
+    return true
   } catch (error) {
     return false
   }

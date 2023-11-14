@@ -38,6 +38,7 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
   async function handleSubmit(data: State, actions: any) {
     const payload = {
       ...data,
+      group: selectedGroup ? selectedGroup.name : '',
       uid: user?.uid,
     } as BookmarkRequest
 
@@ -52,6 +53,7 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
     actions.setSubmitting(false)
     actions.resetForm()
     setIsOpen(false)
+    setSelectedGroup(null)
   }
 
   function handleSelectGroup(group: Group) {

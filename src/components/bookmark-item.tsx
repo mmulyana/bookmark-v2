@@ -8,13 +8,21 @@ import {
 } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import useOutsideClick from '../hooks/useOutsideClick'
+import { deleteBookmarkDB } from '../service/bookmark'
+import { useBookmarkStore } from '../store/bookmarkStore'
 
 export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
+  const { deleteBookmark } = useBookmarkStore()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useOutsideClick({ callback: handleCloseModal, isOpen: isOpen })
 
   function handleCloseModal() {
     setIsOpen(false)
+  }
+
+  async function handleDeleteBookmark(id: string) {
+    const res = await deleteBookmarkDB(id)
+    if (res) deleteBookmark(id)
   }
 
   return (
@@ -57,7 +65,10 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
           ].join(' ')}
           ref={ref}
         >
-          <button className='flex gap-1 items-center hover:bg-gray-300/50 py-0.5 px-1 rounded w-full'>
+          <button
+            className='flex gap-1 items-center hover:bg-gray-300/50 py-0.5 px-1 rounded w-full'
+            onClick={() => handleDeleteBookmark(bookmark.id)}
+          >
             <TrashIcon
               width={15}
               height={15}
