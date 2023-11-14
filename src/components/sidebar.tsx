@@ -8,10 +8,19 @@ import {
   ArchiveBoxIcon,
   Squares2X2Icon,
 } from '@heroicons/react/24/outline'
+import useOutsideClick from '../hooks/useOutsideClick'
 
 export default function Sidebar() {
   const { groups } = useGroupStore()
   const [isOpen, setIsOpen] = useState(false)
+  const formRef = useOutsideClick({
+    callback: handleCloseModal,
+    isOpen: isOpen,
+  })
+
+  function handleCloseModal() {
+    setIsOpen(false)
+  }
 
   return (
     <div className='w-[240px] h-full absolute top-0 left-0 px-4 pt-5'>
@@ -26,21 +35,21 @@ export default function Sidebar() {
           to='/'
           className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
         >
-          <Squares2X2Icon width={16} height={16} />
+          <Squares2X2Icon width={16} height={16} opacity={0.7} />
           All
         </Link>
         <Link
           to='/favorites'
           className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
         >
-          <StarIcon width={16} height={16} />
+          <StarIcon width={16} height={16} opacity={0.7} />
           Favorites
         </Link>
         <Link
           to='/archives'
           className='text-white text-sm flex gap-2 items-center px-1.5 py-1 hover:bg-gray-50/10 rounded'
         >
-          <ArchiveBoxIcon width={16} height={16} />
+          <ArchiveBoxIcon width={16} height={16} opacity={0.7} />
           Archives
         </Link>
       </div>
@@ -59,7 +68,8 @@ export default function Sidebar() {
       <div className='mt-2.5 flex flex-col gap-3 max-h-40 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
         {groups.map((group) => (
           <Link
-            to={`/index?group=${group.name}`}
+            key={group.id}
+            to={`/collection/${group.name}`}
             className='text-white text-sm flex items-center gap-2 capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
           >
             <div
@@ -72,7 +82,11 @@ export default function Sidebar() {
           </Link>
         ))}
       </div>
-      {!!isOpen && <FormGroup setIsOpen={setIsOpen} />}
+      {!!isOpen && (
+        <div ref={formRef}>
+          <FormGroup setIsOpen={setIsOpen} />
+        </div>
+      )}
     </div>
   )
 }

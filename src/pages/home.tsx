@@ -3,10 +3,11 @@ import { useAuthStore } from '../store/authStore'
 import { useBookmarkStore } from '../store/bookmarkStore'
 import { getBookmark } from '../service/bookmark'
 import { Bookmark } from '../model/bookmark'
-import { Link } from 'react-router-dom'
 import { getGroup } from '../service/group'
 import { useGroupStore } from '../store/groupStore'
 import Layout from '../components/layout'
+
+import BookmarkItem from '../components/bookmark-item'
 
 export default function Home() {
   const { user } = useAuthStore()
@@ -31,11 +32,7 @@ export default function Home() {
     <Layout>
       <div className='mt-4'>
         {bookmarks.map((bookmark) => (
-          <div key={bookmark.id}>
-            <Link to={bookmark.link} target='_blank'>
-              {bookmark.name} - {bookmark.group}
-            </Link>
-          </div>
+          <BookmarkItem key={bookmark.id} bookmark={bookmark}/>
         ))}
       </div>
     </Layout>
