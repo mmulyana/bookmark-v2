@@ -4,16 +4,28 @@ type Props = {
   type: string
   placeholder: string
   name: string
+  as?: string
+  className?: string
 }
 
-function TextField({ type, placeholder, name }: Props) {
+function TextField({
+  type,
+  placeholder,
+  name,
+  as = 'input',
+  className,
+}: Props) {
   return (
-    <div className='relative bg-[#F5F5F7] rounded-md h-10 w-full gap-2'>
+    <div className='relative rounded-md h-fit w-full gap-2'>
       <Field
         type={type}
         placeholder={placeholder}
         name={name}
-        className='bg-transparent outline-none px-2.5 w-full h-full'
+        as={as}
+        className={[
+          'py-3 px-2.5 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:outline-blue-600',
+          className ?? 'h-10',
+        ].join(' ')}
       />
       <ErrorMessage
         name={name}

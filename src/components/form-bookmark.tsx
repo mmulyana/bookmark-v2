@@ -8,6 +8,8 @@ import { Bookmark } from '../model/bookmark'
 import { useAuthStore } from '../store/authStore'
 import { useGroupStore } from '../store/groupStore'
 import * as Yup from 'yup'
+import { useState } from 'react'
+import { Group } from '../model/group'
 
 type Props = {
   isOpen: boolean
@@ -31,6 +33,7 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
   const { user } = useAuthStore()
   const { addBookmark } = useBookmarkStore()
   const { groups } = useGroupStore()
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
 
   async function handleSubmit(data: State, actions: any) {
     const payload = {
@@ -51,12 +54,23 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
     setIsOpen(false)
   }
 
-  console.log(groups)
+  function handleSelectGroup(group: Group) {
+    if (group.id === selectedGroup?.id) {
+      setSelectedGroup(null)
+      return
+    }
+
+    setSelectedGroup(group)
+  }
 
   if (isOpen)
     return (
-      <div className='fixed top-0 left-0 h-full w-full bg-black/50 backdrop-blur-sm'>
-        <div className='absolute top-20 left-1/2 w-[600px] bg-white -translate-x-1/2 translate-y-0 rounded-lg p-5'>
+      <div className='fixed top-0 left-0 h-full w-full '>
+        <div
+          className='bg-black/50 backdrop-blur-sm w-full h-full'
+          onClick={() => setIsOpen(false)}
+        />
+        <div className='absolute top-10 left-1/2 w-[600px] bg-white -translate-x-1/2 translate-y-0 rounded-lg p-5'>
           <div className='flex justify-between items-start'>
             <div className='flex gap-2.5 items-center'>
               <div className='w-9 h-9 rounded-full flex items-center justify-center text-blue-800 bg-blue-100'>
@@ -84,21 +98,35 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
               {({ isSubmitting }) => (
                 <Form>
                   <div className='flex flex-col gap-6'>
-                    <TextField name='link' type='text' placeholder='link' />
-                    <TextField name='name' type='text' placeholder='name' />
-                    <div className='relative bg-[#F5F5F7] rounded-md h-fit w-full gap-2'>
-                      <Field
-                        type='textarea'
-                        name='description'
-                        placeholder='Description'
-                        className='bg-transparent outline-none p-2.5 w-full h-full text-sm'
-                        as='textarea'
-                      />
-                      <ErrorMessage
-                        name='description'
-                        component='p'
-                        className='absolute -bottom-4 text-red-500 text-xs'
-                      />
+                    <TextField name='link' type='text' placeholder='Link' />
+                    <TextField name='name' type='text' placeholder='Name' />
+                    <TextField
+                      name='description'
+                      type='textarea'
+                      placeholder='Description'
+                      as='textarea'
+                      className='h-fit'
+                    />
+                    <div>
+                      <p className='text-sm text-gray-800 font-medium'>
+                        Collections
+                      </p>
+                      <div className='flex flex-wrap gap-2 mt-2'>
+                        {groups.map((group) => (
+                          <div
+                            key={group.id}
+                            className={[
+                              'px-3 py-1.5 rounded-full text-xs capitalize cursor-pointer border-[1.5px] hover:border-blue-600',
+                              group.id === selectedGroup?.id
+                                ? 'border-blue-600 bg-blue-600 text-white'
+                                : 'border-transparent bg-gray-100/80',
+                            ].join(' ')}
+                            onClick={() => handleSelectGroup(group)}
+                          >
+                            {group.name}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div className='flex justify-end mt-2'>
                       <button

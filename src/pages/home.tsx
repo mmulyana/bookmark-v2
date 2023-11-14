@@ -72,7 +72,10 @@ export default function Home() {
             />
           </div>
         </div>
-        <button className='bg-blue-600/90 text-white pl-2 pr-3.5 py-1 rounded-md text-xs border border-blue-800 flex gap-1'>
+        <button
+          className='bg-blue-600/90 text-white pl-2 pr-3.5 py-1 rounded-md text-xs border border-blue-800 flex gap-1'
+          onClick={() => setIsOpen(true)}
+        >
           <div className='text-white/90'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -89,9 +92,7 @@ export default function Home() {
               />
             </svg>
           </div>
-          <span className='font-medium' onClick={() => setIsOpen(true)}>
-            Add
-          </span>
+          <span className='font-medium'>Add</span>
         </button>
       </div>
       <div className='mt-4'>
