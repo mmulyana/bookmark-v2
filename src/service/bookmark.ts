@@ -37,7 +37,7 @@ export async function createBookmark(
   }
 }
 
-export async function updateBookmark(
+export async function updateBookmarkDB(
   payload: BookmarkRequest
 ): Promise<string | boolean> {
   try {
@@ -78,6 +78,38 @@ export async function getBookmark(uid: string): Promise<Bookmark[] | boolean> {
     return result as Bookmark[]
   } catch (error) {
     console.log(error)
+    return false
+  }
+}
+
+export async function handleFavoriteBookmarkDB(
+  id: string,
+  value: boolean
+): Promise<boolean> {
+  try {
+    const ref = doc(db, DOCS.DATA, id)
+    const data: Pick<Bookmark, 'isFavorite'> = {
+      isFavorite: value,
+    }
+    await updateDoc(ref, data)
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+export async function handleArchiveBookmarkDB(
+  id: string,
+  value: boolean
+): Promise<boolean> {
+  try {
+    const ref = doc(db, DOCS.DATA, id)
+    const data: Pick<Bookmark, 'isArchive'> = {
+      isArchive: value,
+    }
+    await updateDoc(ref, data)
+    return true
+  } catch (error) {
     return false
   }
 }

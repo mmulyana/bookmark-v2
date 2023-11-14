@@ -6,13 +6,18 @@ import {
   StarIcon,
   ArchiveBoxIcon,
 } from '@heroicons/react/24/outline'
+import { StarIcon as StartIconSolid } from '@heroicons/react/24/solid'
 import { useState } from 'react'
 import useOutsideClick from '../hooks/useOutsideClick'
-import { deleteBookmarkDB } from '../service/bookmark'
+import {
+  deleteBookmarkDB,
+  handleFavoriteBookmarkDB,
+  updateBookmarkDB,
+} from '../service/bookmark'
 import { useBookmarkStore } from '../store/bookmarkStore'
 
 export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
-  const { deleteBookmark } = useBookmarkStore()
+  const { deleteBookmark, updateIsFavorite } = useBookmarkStore()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useOutsideClick({ callback: handleCloseModal, isOpen: isOpen })
 
@@ -23,6 +28,13 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
   async function handleDeleteBookmark(id: string) {
     const res = await deleteBookmarkDB(id)
     if (res) deleteBookmark(id)
+  }
+
+  async function handleFavoriteBookmark(id: string) {
+    const value = bookmark.isFavorite ? false : true
+    const res = await handleFavoriteBookmarkDB(id, value)
+    if (res) updateIsFavorite(id, value)
+    setIsOpen(false)
   }
 
   return (
@@ -39,7 +51,7 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
           {bookmark.group !== '' ? (
             <div
               className={[
-                'px-1.5 py-0.5 rounded border text-xs capitalize mt-1',
+                'px-2 py-0.5 rounded-full border text-xs capitalize',
                 borders[bookmark.color ?? '1'],
                 background[bookmark.color ?? '1'],
                 colors[bookmark.color ?? '1'],
@@ -48,13 +60,16 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
               {bookmark.group}
             </div>
           ) : null}
+          {bookmark.isFavorite ? (
+            <StartIconSolid width={14} height={14} className='text-amber-500' />
+          ) : null}
         </div>
         <p className='text-sm text-gray-500'>{bookmark.description}</p>
       </div>
       <div className='h-fit relative'>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className='mt-1 h-6 w-6 rounded hover:bg-gray-300 flex items-center justify-center'
+          className='mt-1 h-6 w-6 rounded hover:bg-gray-100 flex items-center justify-center'
         >
           <EllipsisHorizontalIcon width={20} height={20} />
         </button>
@@ -77,7 +92,10 @@ export default function BookmarkItem({ bookmark }: { bookmark: Bookmark }) {
             />
             <span className='text-sm text-gray-800'>Delete</span>
           </button>
-          <button className='flex gap-1 items-center hover:bg-gray-300/50 py-0.5 px-1 rounded w-full'>
+          <button
+            className='flex gap-1 items-center hover:bg-gray-300/50 py-0.5 px-1 rounded w-full'
+            onClick={() => handleFavoriteBookmark(bookmark.id)}
+          >
             <StarIcon width={15} height={15} opacity={0.4} className='mt-0.5' />
             <span className='text-sm text-gray-800'>Favorite</span>
           </button>

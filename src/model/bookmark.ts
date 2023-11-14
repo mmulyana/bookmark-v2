@@ -1,9 +1,11 @@
 export type Bookmark = {
-    id: string
-    name: string
-    link: string
-    group: string
-    uid: string
-    description?: string
-    color?: string
+  id: string
+  name: string
+  link: string
+  group: string
+  uid: string
+  description?: string
+  color?: string
+  isFavorite?: boolean
+  isArchive?: boolean
 }
