@@ -10,4 +10,4 @@
 - 💻 Typescript
 - 🔥 Firebase
 - 🔄 Zustand
-- 🛠️ Zod
+- 🛠️ Yup
