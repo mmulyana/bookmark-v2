@@ -8,6 +8,7 @@ interface State {
   updateBookmark: (payload: Bookmark, id: string) => void
   deleteBookmark: (id: string) => void
   updateIsFavorite: (id: string, value: boolean) => void
+  updateIsArchive: (id: string, value: boolean) => void
 }
 
 export const useBookmarkStore = create<State>((set, get) => ({
@@ -47,6 +48,20 @@ export const useBookmarkStore = create<State>((set, get) => ({
     const newBookmarks = get().bookmarks.map((bookmark) => {
       if (bookmark.id === id) {
         return { ...bookmark, isFavorite: value }
+      }
+      return bookmark
+    })
+
+    return set({ bookmarks: [...newBookmarks] })
+  },
+  updateIsArchive: (id, value) => {
+    let isBookmarkExist = get().bookmarks.find((bookmark) => bookmark.id === id)
+
+    if (!isBookmarkExist) return
+
+    const newBookmarks = get().bookmarks.map((bookmark) => {
+      if (bookmark.id === id) {
+        return { ...bookmark, isArchive: value }
       }
       return bookmark
     })
