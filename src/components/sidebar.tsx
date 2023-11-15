@@ -9,6 +9,7 @@ import {
   Squares2X2Icon,
 } from '@heroicons/react/24/outline'
 import useOutsideClick from '../hooks/useOutsideClick'
+import Profile from './profile'
 
 export default function Sidebar() {
   const { groups } = useGroupStore()
@@ -87,6 +88,7 @@ export default function Sidebar() {
           <FormGroup setIsOpen={setIsOpen} />
         </div>
       )}
+      <Profile />
     </div>
   )
 }

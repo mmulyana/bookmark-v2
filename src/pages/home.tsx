@@ -4,7 +4,6 @@ import Layout from '../components/layout'
 
 import BookmarkItem from '../components/bookmark-item'
 import FormBookmark from '../components/form-bookmark'
-import Sort from '../components/sort'
 import Search from '../components/search'
 
 export default function Home() {
@@ -14,10 +13,7 @@ export default function Home() {
   return (
     <Layout>
       <div className='border-b border-gray-300 pb-1.5 flex justify-between items-center'>
-        <div className='flex gap-2'>
-          <Sort />
-          <Search />
-        </div>
+        <Search />
         <button
           className='bg-blue-600/90 text-white pl-2 pr-3.5 py-1 rounded-md text-xs border border-blue-800 flex gap-1'
           onClick={() => setIsOpen(true)}

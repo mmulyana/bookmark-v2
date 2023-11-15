@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -14,13 +13,7 @@ import { DOCS } from '../constants/collection'
 import { nanoid } from 'nanoid'
 import { Bookmark } from '../model/bookmark'
 
-export type BookmarkRequest = {
-  uid: string
-  link: string
-  name: string
-  group: string
-  description?: string
-}
+export type BookmarkRequest = Omit<Bookmark, 'id'>
 
 export async function createBookmark(
   payload: BookmarkRequest

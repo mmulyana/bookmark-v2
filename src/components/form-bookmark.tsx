@@ -1,5 +1,5 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { BookmarkRequest, createBookmark } from '../service/bookmark'
+import { Formik, Form } from 'formik'
+import { createBookmark } from '../service/bookmark'
 import TextField from './textfield'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { SparklesIcon } from '@heroicons/react/24/outline'
@@ -39,8 +39,10 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
     const payload = {
       ...data,
       group: selectedGroup ? selectedGroup.name : '',
+      isArchive: false,
+      isFavorite: false,
       uid: user?.uid,
-    } as BookmarkRequest
+    } as Omit<Bookmark, 'id'>
 
     if (data.name === '') {
       payload.name = data.link
