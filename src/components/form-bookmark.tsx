@@ -39,6 +39,7 @@ export default function FormBookmark({ isOpen, setIsOpen }: Props) {
     const payload = {
       ...data,
       group: selectedGroup ? selectedGroup.name : '',
+      color: selectedGroup ? selectedGroup.color : 1,
       isArchive: false,
       isFavorite: false,
       uid: user?.uid,

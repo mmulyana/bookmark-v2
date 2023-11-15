@@ -1,4 +1,9 @@
-export default function Search() {
+type Props = {
+  value: string
+  setValue: (val: string) => void
+}
+
+export default function Search({ value, setValue }: Props) {
   return (
     <div className='flex items-center gap-1 px-2 py-1 rounded-md border border-gray-300 bg-gray-100/50'>
       <div className='text-gray-400'>
@@ -18,6 +23,8 @@ export default function Search() {
       <input
         className='bg-transparent outline-none border-none text-sm text-gray-700'
         placeholder='Search by title'
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     </div>
   )
