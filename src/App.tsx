@@ -8,6 +8,7 @@ import ProtectedRoute from './utils/protected-route'
 import { useBookmarkStore } from './store/bookmarkStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Archive, Favorite, Home, Login, Register } from './pages'
+import Collection from './pages/collection'
 
 function App() {
   const { user } = useAuthStore()
@@ -53,6 +54,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Archive />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/collection/:group'
+          element={
+            <ProtectedRoute>
+              <Collection />
             </ProtectedRoute>
           }
         />

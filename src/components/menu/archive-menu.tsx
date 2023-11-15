@@ -1,13 +1,11 @@
 import {
   TrashIcon,
-  StarIcon,
   ArchiveBoxIcon,
 } from '@heroicons/react/24/outline'
 import { useBookmarkStore } from '../../store/bookmarkStore'
 import {
   deleteBookmarkDB,
   handleArchiveBookmarkDB,
-  handleFavoriteBookmarkDB,
 } from '../../service/bookmark'
 import { Bookmark } from '../../model/bookmark'
 
@@ -18,9 +16,9 @@ type Props = {
 }
 
 export default function ArchiveMenu({ bookmark, isOpen, setIsOpen }: Props) {
-  const { deleteBookmark, updateIsFavorite, updateIsArchive } =
+  const { deleteBookmark, updateIsArchive } =
     useBookmarkStore()
-  const { id, isFavorite, isArchive } = bookmark
+  const { id, isArchive } = bookmark
 
   async function handleDeleteBookmark(id: string) {
     const res = await deleteBookmarkDB(id)
