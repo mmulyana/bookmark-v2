@@ -49,7 +49,11 @@ export default function Collection() {
             <BookmarkItem key={bookmark.id} bookmark={bookmark} type='base' />
           ))}
       </div>
-      <FormBookmark isOpen={isOpen} setIsOpen={setIsOpen} />
+      <FormBookmark
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        defaultValue={group}
+      />
     </Layout>
   )
 }

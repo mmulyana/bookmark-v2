@@ -8,12 +8,13 @@ import { Bookmark } from '../model/bookmark'
 import { useAuthStore } from '../store/authStore'
 import { useGroupStore } from '../store/groupStore'
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Group } from '../model/group'
 
 type Props = {
   isOpen: boolean
   setIsOpen: (val: boolean) => any
+  defaultValue?: string
 }
 
 type State = Omit<Bookmark, 'uid' | 'id'>
@@ -22,18 +23,27 @@ const schema = Yup.object().shape({
   link: Yup.string().required('Link is required'),
 })
 
-const initiState: State = {
-  link: '',
-  group: '',
-  name: '',
-  description: '',
-}
-
-export default function FormBookmark({ isOpen, setIsOpen }: Props) {
+export default function FormBookmark({
+  isOpen,
+  setIsOpen,
+  defaultValue,
+}: Props) {
   const { user } = useAuthStore()
+  const initiState: State = {
+    link: '',
+    group: defaultValue ?? '',
+    name: '',
+    description: '',
+  }
   const { addBookmark } = useBookmarkStore()
   const { groups } = useGroupStore()
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
+
+  useEffect(() => {
+    if (defaultValue == '') return
+    const group = groups.filter((group) => group.name === defaultValue)[0]
+    setSelectedGroup(group)
+  }, [defaultValue])
 
   async function handleSubmit(data: State, actions: any) {
     const payload = {
