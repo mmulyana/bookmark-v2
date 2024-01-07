@@ -2,7 +2,7 @@
 
 <h3 align="center">Bookmark v2</h3>
 <p align="center">
-  save your favorite websites, articles, and resources in app📙
+  bookmark your favorite websites, articles, and resources in one app✨
 </p>
 
 ## Stack 🚀
