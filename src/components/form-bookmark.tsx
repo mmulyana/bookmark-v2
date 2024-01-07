@@ -66,7 +66,6 @@ export default function FormBookmark({
     actions.setSubmitting(false)
     actions.resetForm()
     setIsOpen(false)
-    setSelectedGroup(null)
   }
 
   function handleSelectGroup(group: Group) {
