@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getGroup } from './service/group'
 import { Bookmark } from './model/bookmark'
 import { getBookmark } from './service/bookmark'
@@ -9,26 +9,49 @@ import { useBookmarkStore } from './store/bookmarkStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Archive, Favorite, Home, Login, Register } from './pages'
 import Collection from './pages/collection'
+import { DocumentSnapshot } from 'firebase/firestore'
 
 function App() {
   const { user } = useAuthStore()
   const { importGroups } = useGroupStore()
   const { bookmarks, importBookmark } = useBookmarkStore()
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null)
 
   useEffect(() => {
-    async function getAllBookmark(uid: string) {
-      const bookmarks = await getBookmark(uid)
+    async function getGroups(uid: string) {
       const groups = await getGroup(uid)
-      if (!bookmarks) return
-      if (!groups) return
 
-      importBookmark(bookmarks as Bookmark[])
       importGroups(groups as never)
     }
+
     if (!user) return
-    if (bookmarks.length > 1) return
-    getAllBookmark(user.uid)
+    getGroups(user.uid)
   }, [user])
+
+  const loadBookmarks = async (isInitialLoad: boolean = false) => {
+    try {
+      if (!user) return
+
+      const result = await getBookmark(
+        user?.uid,
+        isInitialLoad ? null : lastVisible
+      )
+      importBookmark([...bookmarks, ...result.bookmarks] as Bookmark[])
+      setLastVisible(result.lastVisible)
+    } catch (error) {
+      console.error('Error loading bookmarks:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!user) return
+
+    loadBookmarks(true)
+  }, [user])
+
+  const handleLoadMore = () => {
+    loadBookmarks()
+  }
 
   return (
     <BrowserRouter>
@@ -37,7 +60,7 @@ function App() {
           path='/'
           element={
             <ProtectedRoute>
-              <Home />
+              <Home handleLoadMore={handleLoadMore}/>
             </ProtectedRoute>
           }
         />
