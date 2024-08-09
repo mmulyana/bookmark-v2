@@ -2,9 +2,12 @@ import {
   collection,
   deleteDoc,
   doc,
+  DocumentSnapshot,
   getDocs,
+  limit,
   query,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from 'firebase/firestore'
@@ -14,6 +17,7 @@ import { nanoid } from 'nanoid'
 import { Bookmark } from '../model/bookmark'
 
 export type BookmarkRequest = Omit<Bookmark, 'id'>
+const PAGE_SIZE = 10
 
 export async function createBookmark(
   payload: BookmarkRequest
@@ -56,22 +60,44 @@ export async function deleteBookmarkDB(id: string): Promise<boolean> {
   }
 }
 
-export async function getBookmark(uid: string): Promise<Bookmark[] | boolean> {
+export async function getBookmark(
+  uid: string,
+  lastVisible?: DocumentSnapshot | null
+): Promise<{
+  bookmarks: Bookmark[]
+  lastVisible: DocumentSnapshot | null
+}> {
   try {
-    const ref = query(collection(db, DOCS.DATA), where('uid', '==', uid))
+    let ref = query(
+      collection(db, DOCS.DATA),
+      where('uid', '==', uid),
+      limit(PAGE_SIZE)
+    )
+
+    if (lastVisible) {
+      ref = query(ref, startAfter(lastVisible))
+    }
+
     const data = await getDocs(ref)
 
-    if (!data) return false
+    if (data.empty) {
+      return { bookmarks: [], lastVisible: null }
+    }
 
-    const result = data.docs.map((doc) => ({
+    const bookmarks = data.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-    }))
+    })) as Bookmark[]
 
-    return result as Bookmark[]
+    const newLastVisible = data.docs[data.docs.length - 1]
+
+    return {
+      bookmarks,
+      lastVisible: newLastVisible,
+    }
   } catch (error) {
-    console.log(error)
-    return false
+    console.error('Error fetching bookmarks:', error)
+    throw error
   }
 }
 
