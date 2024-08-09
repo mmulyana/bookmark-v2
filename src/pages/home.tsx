@@ -5,7 +5,10 @@ import FormBookmark from '../components/form-bookmark'
 import BookmarkItem from '../components/bookmark-item'
 import { useBookmarkStore } from '../store/bookmarkStore'
 
-export default function Home() {
+type Props = {
+  handleLoadMore: () => void
+}
+export default function Home(props: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { bookmarks } = useBookmarkStore()
   const [search, setSearch] = useState<string>('')
@@ -40,10 +43,13 @@ export default function Home() {
       <div className='mt-4'>
         {bookmarks
           .filter((bookmark) => bookmark.isArchive === false)
-          .filter((bookmark) => bookmark.name.toLowerCase().includes(search.toLowerCase()))
+          .filter((bookmark) =>
+            bookmark.name.toLowerCase().includes(search.toLowerCase())
+          )
           .map((bookmark) => (
             <BookmarkItem key={bookmark.id} bookmark={bookmark} type='base' />
           ))}
+        <button className='mx-auto block px-2 py-0.5 rounded-md border mt-4' onClick={props.handleLoadMore}>Load More</button>
       </div>
       <FormBookmark isOpen={isOpen} setIsOpen={setIsOpen} />
     </Layout>
