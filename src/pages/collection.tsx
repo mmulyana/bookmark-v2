@@ -1,16 +1,42 @@
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
+import BookmarkItem from '../components/bookmark-item'
+import FormBookmark from '../components/form-bookmark'
+import { DOCS } from '../constants/collection'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import Layout from '../components/layout'
 import Search from '../components/search'
-import BookmarkItem from '../components/bookmark-item'
-import { useBookmarkStore } from '../store/bookmarkStore'
-import { useParams } from 'react-router-dom'
-import { useState } from 'react'
-import FormBookmark from '../components/form-bookmark'
+import { db } from '../service/firebase'
+import { Group } from '../model/group'
+
+type Groups = Group & { group: string; link: string }
 
 export default function Collection() {
   const [search, setSearch] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { bookmarks } = useBookmarkStore()
+  const [_, setError] = useState('')
   const { group } = useParams()
+  const [data, setData] = useState<Groups[]>([])
+
+  useEffect(() => {
+    const q = query(collection(db, DOCS.DATA), where('group', '==', group))
+
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const groupsList: Groups[] = []
+        querySnapshot.forEach((doc) => {
+          groupsList.push({ id: doc.id, ...doc.data() } as Groups)
+        })
+        setData(groupsList)
+      },
+      (error) => {
+        setError('Failed to fetch data. Please try again later.')
+      }
+    )
+
+    return () => unsubscribe()
+  }, [group])
 
   return (
     <Layout>
@@ -40,8 +66,7 @@ export default function Collection() {
         </button>
       </div>
       <div className='mt-4'>
-        {bookmarks
-          .filter((bookmark) => bookmark.group === group)
+        {data
           .filter((bookmark) =>
             bookmark.name.toLowerCase().includes(search.toLowerCase())
           )
