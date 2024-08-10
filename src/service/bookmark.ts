@@ -63,7 +63,7 @@ export async function deleteBookmarkDB(id: string): Promise<boolean> {
 export async function getBookmark(
   uid: string,
   lastVisible?: DocumentSnapshot | null,
-  size: number = 10
+  size: number = PAGE_SIZE
 ): Promise<{
   bookmarks: Bookmark[]
   lastVisible: DocumentSnapshot | null
