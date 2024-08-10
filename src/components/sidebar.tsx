@@ -86,7 +86,7 @@ export default function Sidebar() {
           <PlusIcon height={16} width={16} />
         </button>
       </div>
-      <div className='mt-2.5 flex flex-col gap-3 max-h-40 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
+      <div className='mt-2.5 flex flex-col gap-3 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
         {groups.map((group) => (
           <div
             key={group.id}
