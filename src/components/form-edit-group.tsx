@@ -26,10 +26,8 @@ export default function FormEditGroup(props: Props) {
         color: index,
         uid: user?.uid,
       } as groupRequest & { id: string }
-      console.log('payload', payload)
 
       const res = await updateGroup(payload)
-      console.log(res)
       if (!res || !props.data?.id) return
 
       updateGroupById(payload, props.data?.id)
