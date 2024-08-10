@@ -90,7 +90,7 @@ export default function Sidebar() {
                   colors[group.color ?? '1'],
                 ].join(' ')}
               />
-              <Link to={`/collection/${group.name}`}>{group.name}</Link>
+              <Link to={`/collection/${group.id}`}>{group.name}</Link>
             </div>
             <div className='flex gap-2 items-center'>
               <button
