@@ -48,7 +48,7 @@ export default function FormBookmark({
   async function handleSubmit(data: State, actions: any) {
     const payload = {
       ...data,
-      group: selectedGroup ? selectedGroup.name : '',
+      group: selectedGroup ? selectedGroup.id : '',
       color: selectedGroup ? selectedGroup.color : 1,
       isArchive: false,
       isFavorite: false,
