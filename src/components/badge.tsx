@@ -3,7 +3,7 @@ type Props = {
   name: string
 }
 export default function Badge({ color, name }: Props) {
-  if (name === '') return null
+  if (name === '' || name == undefined) return null
   return (
     <div
       className={[
