@@ -85,7 +85,6 @@ export default function FormGroup({
             className='outline-none ml-4 py-1.5 px-2.5 rounded bg-gray-50/10 w-[calc(100%-16px)] h-full text-sm text-white'
             autoFocus
           />
-          {/* <div className='absolute -bottom-[2px] left-4 w-[calc(100%-16px)] h-[1px] bg-gray-50/10' /> */}
           <ErrorMessage
             name='name'
             component='p'

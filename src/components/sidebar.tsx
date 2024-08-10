@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useGroupStore } from '../store/groupStore'
-import { PlusIcon } from '@heroicons/react/20/solid'
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { useState } from 'react'
 import FormGroup from './form-group'
 import {
@@ -10,17 +10,28 @@ import {
 } from '@heroicons/react/24/outline'
 import useOutsideClick from '../hooks/useOutsideClick'
 import Profile from './profile'
+import { Group } from '../model/group'
+import FormEditGroup from './form-edit-group'
 
 export default function Sidebar() {
   const { groups } = useGroupStore()
   const [isOpen, setIsOpen] = useState(false)
-  const formRef = useOutsideClick({
-    callback: handleCloseModal,
+  const [isEdit, setIsEdit] = useState(false)
+
+  const [selectedGroup, setSelectedGroup] = useState<Group>()
+
+  const formAddRef = useOutsideClick({
+    callback: () => setIsOpen(false),
     isOpen: isOpen,
   })
+  const formEditRef = useOutsideClick({
+    callback: () => setIsEdit(false),
+    isOpen: isEdit,
+  })
 
-  function handleCloseModal() {
-    setIsOpen(false)
+  function handleUpdateModal(group: Group) {
+    setSelectedGroup(group)
+    setIsEdit(true)
   }
 
   return (
@@ -68,24 +79,41 @@ export default function Sidebar() {
       </div>
       <div className='mt-2.5 flex flex-col gap-3 max-h-40 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
         {groups.map((group) => (
-          <Link
+          <div
             key={group.id}
-            to={`/collection/${group.name}`}
-            className='text-white text-sm flex items-center gap-2 capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
+            className='text-white text-sm flex items-center justify-between capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
           >
-            <div
-              className={[
-                'w-2 h-2 rounded-full',
-                colors[group.color ?? '1'],
-              ].join(' ')}
-            />
-            {group.name}
-          </Link>
+            <div className='flex items-center gap-2 '>
+              <div
+                className={[
+                  'w-2 h-2 rounded-full',
+                  colors[group.color ?? '1'],
+                ].join(' ')}
+              />
+              <Link to={`/collection/${group.name}`}>{group.name}</Link>
+            </div>
+            <div className='flex gap-2 items-center'>
+              <button
+                onClick={() => handleUpdateModal(group)}
+                className='text-white/40'
+              >
+                <PencilIcon className='text-sm w-3 h-3' />
+              </button>
+              <button className='text-red-400'>
+                <TrashIcon className='text-sm w-3 h-3' />
+              </button>
+            </div>
+          </div>
         ))}
       </div>
       {!!isOpen && (
-        <div ref={formRef}>
+        <div ref={formAddRef}>
           <FormGroup setIsOpen={setIsOpen} />
+        </div>
+      )}
+      {!isOpen && isEdit && (
+        <div ref={formEditRef}>
+          <FormEditGroup data={selectedGroup} setOpen={setIsEdit} />
         </div>
       )}
       <Profile />
