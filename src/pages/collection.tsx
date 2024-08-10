@@ -14,9 +14,9 @@ type Groups = Group & { group: string; link: string }
 export default function Collection() {
   const [search, setSearch] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [_, setError] = useState('')
-  const { group } = useParams()
   const [data, setData] = useState<Groups[]>([])
+
+  const { group } = useParams()
 
   useEffect(() => {
     const q = query(collection(db, DOCS.DATA), where('group', '==', group))
@@ -31,7 +31,7 @@ export default function Collection() {
         setData(groupsList)
       },
       (error) => {
-        setError('Failed to fetch data. Please try again later.')
+        console.log(error)
       }
     )
 
