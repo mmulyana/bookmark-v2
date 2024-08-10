@@ -1,17 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Search from '../components/search'
 import Layout from '../components/layout'
 import FormBookmark from '../components/form-bookmark'
 import BookmarkItem from '../components/bookmark-item'
-import { useBookmarkStore } from '../store/bookmarkStore'
+import { useAuthStore } from '../store/authStore'
+import { getBookmark } from '../service/bookmark'
+import { DocumentSnapshot } from 'firebase/firestore'
+import { Bookmark } from '../model/bookmark'
 
-type Props = {
-  handleLoadMore: () => void
-}
-export default function Home(props: Props) {
+export default function Home() {
+  const { user } = useAuthStore()
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { bookmarks } = useBookmarkStore()
   const [search, setSearch] = useState<string>('')
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null)
+  const [data, setData] = useState<Bookmark[]>([])
+
+  const loadBookmarks = async (isInitialLoad: boolean = false) => {
+    try {
+      if (!user) return
+
+      const result = await getBookmark(
+        user?.uid,
+        isInitialLoad ? null : lastVisible
+      )
+      setData((prev) => [...prev, ...result.bookmarks])
+      setLastVisible(result.lastVisible)
+    } catch (error) {
+      console.error('Error loading bookmarks:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!user) return
+
+    loadBookmarks(true)
+  }, [user])
+
+  const handleLoadMore = () => {
+    loadBookmarks()
+  }
 
   return (
     <Layout>
@@ -41,7 +69,7 @@ export default function Home(props: Props) {
         </button>
       </div>
       <div className='mt-4'>
-        {bookmarks
+        {data
           .filter((bookmark) => bookmark.isArchive === false)
           .filter((bookmark) =>
             bookmark.name.toLowerCase().includes(search.toLowerCase())
@@ -49,7 +77,12 @@ export default function Home(props: Props) {
           .map((bookmark) => (
             <BookmarkItem key={bookmark.id} bookmark={bookmark} type='base' />
           ))}
-        <button className='mx-auto block px-2 py-0.5 rounded-md border mt-4' onClick={props.handleLoadMore}>Load More</button>
+        <button
+          className='mx-auto block px-2 py-0.5 rounded-md border mt-4'
+          onClick={handleLoadMore}
+        >
+          Load More
+        </button>
       </div>
       <FormBookmark isOpen={isOpen} setIsOpen={setIsOpen} />
     </Layout>
