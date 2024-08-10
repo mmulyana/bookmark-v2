@@ -9,7 +9,6 @@ import FavoriteTag from './favorite-tag'
 import FavoriteMenu from './menu/favorite-menu'
 import ArchiveMenu from './menu/archive-menu'
 import { useGroupStore } from '../store/groupStore'
-import { Group } from '../model/group'
 
 type Props = {
   bookmark: Bookmark
