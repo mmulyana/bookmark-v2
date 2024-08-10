@@ -44,13 +44,16 @@ export default function Sidebar() {
   }
 
   return (
-    <div className='w-[240px] h-full absolute top-0 left-0 px-4 pt-5'>
-      <p className='text-gray-100 text-base font-medium flex items-center gap-2'>
+    <div className='w-[240px] min-h-screen absolute top-0 left-0 px-4 pt-5 overflow-hidden'>
+      <p className='text-gray-100 text-base font-medium flex items-center gap-2 mb-4'>
         Bookmark{' '}
         <span className='text-white bg-blue-900 text-[10px] w-5 h-5 rounded flex justify-center items-center border border-blue-700'>
           v2
         </span>
       </p>
+
+      <Profile />
+
       <div className='mt-8 flex flex-col gap-4'>
         <Link
           to='/'
@@ -86,37 +89,38 @@ export default function Sidebar() {
           <PlusIcon height={16} width={16} />
         </button>
       </div>
-      <div className='mt-2.5 flex flex-col gap-3 overflow-y-auto border-b border-gray-50/10 pb-2 group__wrapper'>
+
+      <div className='mt-2.5 flex flex-col gap-3 pb-2 overflow-y-auto group__wrapper h-[calc(100vh-335px)]'>
         {groups.map((group) => (
-          <div
-            key={group.id}
-            className='text-white text-sm flex items-center justify-between capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
-          >
-            <div className='flex items-center gap-2 '>
-              <div
-                className={[
-                  'w-2 h-2 rounded-full',
-                  colors[group.color ?? '1'],
-                ].join(' ')}
-              />
-              <Link to={`/collection/${group.id}`}>{group.name}</Link>
+            <div
+              key={group.id}
+              className='text-white text-sm flex items-center justify-between capitalize hover:bg-gray-50/10 py-1 px-1.5 w-[calc(100%-4px)] rounded'
+            >
+              <div className='flex items-center gap-2 '>
+                <div
+                  className={[
+                    'w-2 h-2 rounded-full',
+                    colors[group.color ?? '1'],
+                  ].join(' ')}
+                />
+                <Link to={`/collection/${group.id}`}>{group.name}</Link>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <button
+                  onClick={() => handleUpdateModal(group)}
+                  className='text-white/40'
+                >
+                  <PencilIcon className='text-sm w-3 h-3' />
+                </button>
+                <button
+                  onClick={() => handleDeleteModal(group.id)}
+                  className='text-red-400'
+                >
+                  <TrashIcon className='text-sm w-3 h-3' />
+                </button>
+              </div>
             </div>
-            <div className='flex gap-2 items-center'>
-              <button
-                onClick={() => handleUpdateModal(group)}
-                className='text-white/40'
-              >
-                <PencilIcon className='text-sm w-3 h-3' />
-              </button>
-              <button
-                onClick={() => handleDeleteModal(group.id)}
-                className='text-red-400'
-              >
-                <TrashIcon className='text-sm w-3 h-3' />
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
       {!!isOpen && (
         <div ref={formAddRef}>
@@ -135,7 +139,6 @@ export default function Sidebar() {
           id={selectedId}
         />
       )}
-      <Profile />
     </div>
   )
 }

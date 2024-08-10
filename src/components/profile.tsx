@@ -16,7 +16,7 @@ export default function Profile() {
   }
 
   return (
-    <div className='flex justify-between items-center bg-[#232323] rounded-md p-2 absolute bottom-4 w-[calc(100%-32px)] left-1/2 -translate-x-1/2 border border-gray-50/10'>
+    <div className='flex justify-between items-center bg-[#232323] rounded-md p-2 border border-gray-50/10'>
       <div className='flex gap-1 items-center'>
         <img src={srcImg} alt='profile' className='w-7 h-7' />
         <div>
