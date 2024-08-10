@@ -31,10 +31,10 @@ export async function createGroup(
 }
 
 export async function updateGroup(
-  payload: groupRequest
+  payload: groupRequest & { id: string }
 ): Promise<string | boolean> {
   try {
-    const ref = doc(db, DOCS.GROUP, payload.uid)
+    const ref = doc(db, DOCS.GROUP, payload.id)
 
     const body = { ...payload } as Partial<groupRequest>
     delete body.uid
