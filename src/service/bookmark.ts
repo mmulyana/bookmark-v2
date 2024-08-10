@@ -62,7 +62,8 @@ export async function deleteBookmarkDB(id: string): Promise<boolean> {
 
 export async function getBookmark(
   uid: string,
-  lastVisible?: DocumentSnapshot | null
+  lastVisible?: DocumentSnapshot | null,
+  size: number = 10
 ): Promise<{
   bookmarks: Bookmark[]
   lastVisible: DocumentSnapshot | null
@@ -71,7 +72,7 @@ export async function getBookmark(
     let ref = query(
       collection(db, DOCS.DATA),
       where('uid', '==', uid),
-      limit(PAGE_SIZE)
+      limit(size)
     )
 
     if (lastVisible) {

@@ -6,15 +6,17 @@ import BookmarkItem from '../components/bookmark-item'
 import { useAuthStore } from '../store/authStore'
 import { getBookmark } from '../service/bookmark'
 import { DocumentSnapshot } from 'firebase/firestore'
-import { Bookmark } from '../model/bookmark'
+import { useBookmarkStore } from '../store/bookmarkStore'
+import useUrlState from '@ahooksjs/use-url-state'
 
 export default function Home() {
   const { user } = useAuthStore()
+  const { importBookmark, bookmarks } = useBookmarkStore()
+  const [url, _] = useUrlState({ limit: 10 })
 
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
-  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null)
-  const [data, setData] = useState<Bookmark[]>([])
 
   const loadBookmarks = async (isInitialLoad: boolean = false) => {
     try {
@@ -22,9 +24,12 @@ export default function Home() {
 
       const result = await getBookmark(
         user?.uid,
-        isInitialLoad ? null : lastVisible
+        isInitialLoad ? null : lastVisible,
+        Number(url.limit)
       )
-      setData((prev) => [...prev, ...result.bookmarks])
+      importBookmark(
+        isInitialLoad ? result.bookmarks : [...bookmarks, ...result.bookmarks]
+      )
       setLastVisible(result.lastVisible)
     } catch (error) {
       console.error('Error loading bookmarks:', error)
@@ -69,7 +74,7 @@ export default function Home() {
         </button>
       </div>
       <div className='mt-4'>
-        {data
+        {bookmarks
           .filter((bookmark) => bookmark.isArchive === false)
           .filter((bookmark) =>
             bookmark.name.toLowerCase().includes(search.toLowerCase())
