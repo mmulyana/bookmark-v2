@@ -1,13 +1,15 @@
 import { Bookmark } from '../model/bookmark'
 import { Link } from 'react-router-dom'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import useOutsideClick from '../hooks/useOutsideClick'
 import DefaultMenu from './menu/default-menu'
 import Badge from './badge'
 import FavoriteTag from './favorite-tag'
 import FavoriteMenu from './menu/favorite-menu'
 import ArchiveMenu from './menu/archive-menu'
+import { useGroupStore } from '../store/groupStore'
+import { Group } from '../model/group'
 
 type Props = {
   bookmark: Bookmark
@@ -17,10 +19,20 @@ type Props = {
 export default function BookmarkItem({ bookmark, type }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const ref = useOutsideClick({ callback: handleCloseModal, isOpen: isOpen })
+  const { groups } = useGroupStore()
 
   function handleCloseModal() {
     setIsOpen(false)
   }
+
+  const groupsCollection = useMemo(
+    () =>
+      groups.reduce<Record<string, string>>((acc, item) => {
+        acc[item.id] = item.name
+        return acc
+      }, {}),
+    [groups]
+  )
 
   return (
     <div className='flex items-start justify-between border-b border-gray-200 py-3.5 px-2.5'>
@@ -33,7 +45,7 @@ export default function BookmarkItem({ bookmark, type }: Props) {
           >
             {bookmark.name}
           </Link>
-          <Badge color={bookmark.color ?? '1'} name={bookmark.group} />
+          <Badge color={bookmark.color ?? '1'} name={groupsCollection[bookmark.group]} />
           <FavoriteTag isFavorite={bookmark.isFavorite ?? false} />
         </div>
         <p className='text-sm text-gray-500'>{bookmark.description}</p>
