@@ -5,7 +5,7 @@ interface State {
   groups: Group[]
   importGroups: (payload: Group[]) => void
   addGroup: (payload: Group) => void
-  updateGroup: (payload: Group, id: string) => void
+  updateGroupById: (payload: Group, id: string) => void
   deleteGroup: (id: string) => void
 }
 
@@ -19,19 +19,15 @@ export const useGroupStore = create<State>((set, get) => ({
   addGroup: (payload) => {
     set((state) => ({ groups: [...state.groups, payload] }))
   },
-  updateGroup: (payload, id) => {
-    let isBookmarkExist = get().groups.find((group) => group.id === id)
-
-    if (!isBookmarkExist) return
-
-    const newGroups = get().groups.map((group) => {
-      if (group.id === id) {
-        return { ...group, payload }
-      }
-      return group
-    })
-
-    return set({ groups: [...newGroups] })
+  updateGroupById: (payload, id) => {
+    set((state) => ({
+      groups: state.groups.map((group) => {
+        if (group.id === id) {
+          return { ...group, ...payload }
+        }
+        return group
+      }),
+    }))
   },
   deleteGroup: (id) => {
     set((state) => ({
