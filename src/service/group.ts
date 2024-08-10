@@ -46,12 +46,12 @@ export async function updateGroup(
   }
 }
 export async function deleteGroup({
-  uid,
+  id,
 }: {
-  uid: string
+  id: string
 }): Promise<string | boolean> {
   try {
-    const ref = doc(db, DOCS.GROUP, uid)
+    const ref = doc(db, DOCS.GROUP, id)
     await deleteDoc(ref)
     return 'success update'
   } catch (error) {
