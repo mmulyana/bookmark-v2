@@ -1,21 +1,54 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect } from 'react'
 import { getGroup } from './service/group'
-import { Bookmark } from './model/bookmark'
-import { getBookmark } from './service/bookmark'
 import { useAuthStore } from './store/authStore'
 import { useGroupStore } from './store/groupStore'
 import ProtectedRoute from './utils/protected-route'
-import { useBookmarkStore } from './store/bookmarkStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Archive, Favorite, Home, Login, Register } from './pages'
 import Collection from './pages/collection'
-import { DocumentSnapshot } from 'firebase/firestore'
+import Home from './pages/home'
+import Favorite from './pages/favorite'
+import Archive from './pages/archive'
+import Login from './pages/login'
+import Register from './pages/register'
+import LoadingScreen from './components/loading-screen'
+
+const useRoutes = () => [
+  {
+    path: '/',
+    element: <Home />,
+    isProtected: true,
+  },
+  {
+    path: '/favorites',
+    element: <Favorite />,
+    isProtected: true,
+  },
+  {
+    path: '/archives',
+    element: <Archive />,
+    isProtected: true,
+  },
+  {
+    path: '/collection/:group',
+    element: <Collection />,
+    isProtected: true,
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    isProtected: false,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+    isProtected: false,
+  },
+]
 
 function App() {
+  const routes = useRoutes()
   const { user } = useAuthStore()
   const { importGroups } = useGroupStore()
-  const { bookmarks, importBookmark } = useBookmarkStore()
-  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null)
 
   useEffect(() => {
     async function getGroups(uid: string) {
@@ -28,69 +61,24 @@ function App() {
     getGroups(user.uid)
   }, [user])
 
-  const loadBookmarks = async (isInitialLoad: boolean = false) => {
-    try {
-      if (!user) return
-
-      const result = await getBookmark(
-        user?.uid,
-        isInitialLoad ? null : lastVisible
-      )
-      importBookmark([...bookmarks, ...result.bookmarks] as Bookmark[])
-      setLastVisible(result.lastVisible)
-    } catch (error) {
-      console.error('Error loading bookmarks:', error)
-    }
-  }
-
-  useEffect(() => {
-    if (!user) return
-
-    loadBookmarks(true)
-  }, [user])
-
-  const handleLoadMore = () => {
-    loadBookmarks()
-  }
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path='/'
-          element={
-            <ProtectedRoute>
-              <Home handleLoadMore={handleLoadMore}/>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/favorites'
-          element={
-            <ProtectedRoute>
-              <Favorite />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/archives'
-          element={
-            <ProtectedRoute>
-              <Archive />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path='/collection/:group'
-          element={
-            <ProtectedRoute>
-              <Collection />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        {routes.map((route, idx) => (
+          <Route
+            key={idx}
+            path={route.path}
+            element={
+              <Suspense fallback={<LoadingScreen />}>
+                {route.isProtected ? (
+                  <ProtectedRoute>{route.element}</ProtectedRoute>
+                ) : (
+                  route.element
+                )}
+              </Suspense>
+            }
+          />
+        ))}
       </Routes>
     </BrowserRouter>
   )
