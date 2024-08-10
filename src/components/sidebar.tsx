@@ -12,12 +12,15 @@ import useOutsideClick from '../hooks/useOutsideClick'
 import Profile from './profile'
 import { Group } from '../model/group'
 import FormEditGroup from './form-edit-group'
+import FormDeleteBookmark from './form-delete-group'
 
 export default function Sidebar() {
   const { groups } = useGroupStore()
   const [isOpen, setIsOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
+  const [isDelete, setIsDelete] = useState(false)
 
+  const [selectedId, setSelectedId] = useState('')
   const [selectedGroup, setSelectedGroup] = useState<Group>()
 
   const formAddRef = useOutsideClick({
@@ -30,8 +33,14 @@ export default function Sidebar() {
   })
 
   function handleUpdateModal(group: Group) {
+    if (isOpen) setIsOpen(false)
+
     setSelectedGroup(group)
     setIsEdit(true)
+  }
+  function handleDeleteModal(id: string) {
+    setSelectedId(id)
+    setIsDelete(true)
   }
 
   return (
@@ -99,7 +108,10 @@ export default function Sidebar() {
               >
                 <PencilIcon className='text-sm w-3 h-3' />
               </button>
-              <button className='text-red-400'>
+              <button
+                onClick={() => handleDeleteModal(group.id)}
+                className='text-red-400'
+              >
                 <TrashIcon className='text-sm w-3 h-3' />
               </button>
             </div>
@@ -115,6 +127,13 @@ export default function Sidebar() {
         <div ref={formEditRef}>
           <FormEditGroup data={selectedGroup} setOpen={setIsEdit} />
         </div>
+      )}
+      {isDelete && (
+        <FormDeleteBookmark
+          isOpen={isDelete}
+          setIsOpen={setIsDelete}
+          id={selectedId}
+        />
       )}
       <Profile />
     </div>
